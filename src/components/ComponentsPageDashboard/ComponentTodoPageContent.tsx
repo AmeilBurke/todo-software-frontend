@@ -1,36 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Todo } from "../../types/TypeIndex";
 import {
-    Box,
     Checkbox,
     HStack,
     Input,
-    List,
     ListItem,
-    Text,
     UnorderedList,
 } from "@chakra-ui/react";
-import { TfiTrash } from "react-icons/tfi";
 import apiRequestUpdateActiveTodoList from "../../apiRequests/UPDATE/apiRequestUpdateActiveTodoList";
-import GetAllTodosForAPage from "../../apiRequests/GET/GetAllTodosForAPage";
 import apiRequestDeleteIndividualTodo from "../../apiRequests/DELETE/apiRequestDeleteIndividualTodo";
 import ComponentModalConfirmDelete from "./ComponentModalConfirmDelete";
 
 const ComponentTodoPageContent = ({
     todo,
-    activePageTodoArray,
-    setActivePageTodoArray,
+    activeTodoPageTodos,
+    getTodosForActivePageFromApi
 }: {
-    todo: Todo;
-    activePageTodoArray: Todo[];
-    setActivePageTodoArray: React.Dispatch<React.SetStateAction<Todo[]>>;
+    todo: Todo,
+    activeTodoPageTodos: Todo[],
+    getTodosForActivePageFromApi: (givenPageId?: number) => Promise<void>,
 }) => {
     const [userEditText, setUserEditText] = useState<string>("-1");
     const [itemContent, setItemContent] = useState<string>("");
     const [itemPrefix, setItemPrefix] = useState<string>("");
-    const [inputTypeActive, setInputTypeActive] = useState<string>("");
-
-    const [testingUseState, setTestingUseState] = useState<any>();
+    // const [inputTypeActive, setInputTypeActive] = useState<string>("");
 
     useEffect(() => {
         let firstDashIndex = todo.todo_content.indexOf("-");
@@ -46,37 +39,42 @@ const ComponentTodoPageContent = ({
         }
     }, []);
 
-    const updateTodo = async (event: React.KeyboardEvent<HTMLInputElement> | boolean) => {
-
-        if (typeof event !== 'boolean') {
+    const updateTodoHandler = async (event: React.KeyboardEvent<HTMLInputElement> | boolean) => {
+        if (typeof event !== "boolean") {
             if (event.key === "Enter") {
-                await apiRequestUpdateActiveTodoList({
-                    todoId: Number(todo.todo_id),
-                    todoContent: `${itemPrefix}-${userEditText}`,
-                });
-                await updateActivePageTodos();
+                await updateTodo();
             }
         } else {
-            await apiRequestUpdateActiveTodoList({
-                todoId: Number(todo.todo_id),
-                todoContent: `${itemPrefix}-${userEditText}`,
-            });
-            await updateActivePageTodos();
+            await updateTodo();
         }
+
     };
+
+    const updateTodo = async () => {
+        let allActivePageTodoIndex = activeTodoPageTodos.findIndex(todoElement => todoElement.todo_id === todo.todo_id);
+        let allActivePageTodos = activeTodoPageTodos;
+
+        if (userEditText === "-1") {
+            allActivePageTodos[allActivePageTodoIndex] = { todo_id: todo.todo_id, todo_content: todo.todo_content, todoPage_id: todo.todoPage_id }
+        } else {
+            allActivePageTodos[allActivePageTodoIndex] = { todo_id: todo.todo_id, todo_content: `${itemPrefix}-${userEditText}`, todoPage_id: todo.todoPage_id }
+        }
+
+        allActivePageTodos.map(async (todoElement) => {
+            await apiRequestUpdateActiveTodoList({
+                todoId: Number(todoElement.todo_id),
+                todoContent: todoElement.todo_content
+            }).then(async () => {
+                await getTodosForActivePageFromApi(todo.todoPage_id);
+            });
+        });
+    }
 
     const deleteTodo = async () => {
-        await apiRequestDeleteIndividualTodo(Number(todo.todo_id));
-        await updateActivePageTodos();
+        await apiRequestDeleteIndividualTodo(Number(todo.todo_id)).then(async () => {
+            await getTodosForActivePageFromApi(todo.todoPage_id);
+        });
     };
-
-    const updateActivePageTodos = async () => {
-        const getTodoArrayForActivePageApiResponse = await GetAllTodosForAPage(todo.todoPage_id);
-
-        if (typeof getTodoArrayForActivePageApiResponse !== 'string') {
-            setActivePageTodoArray(getTodoArrayForActivePageApiResponse);
-        }
-    }
 
     if (itemPrefix === "li") {
         return (
@@ -86,10 +84,10 @@ const ComponentTodoPageContent = ({
                     <ListItem>
                         <Input
                             value={userEditText === "-1" ? itemContent : userEditText}
-                            onClick={() => setInputTypeActive("listItem")}
+                            // onClick={() => setInputTypeActive("listItem")}
                             onChange={(e) => setUserEditText(e.target.value)}
-                            onKeyDown={(e) => updateTodo(e)}
-                            onBlur={() => updateTodo(true)}
+                            onKeyDown={(e) => updateTodoHandler(e)}
+                            onBlur={() => updateTodoHandler(true)}
                             placeholder="list"
                             variant="unstyled"
                         />
@@ -106,10 +104,10 @@ const ComponentTodoPageContent = ({
                 <Checkbox></Checkbox>
                 <Input
                     value={userEditText === "-1" ? itemContent : userEditText}
-                    onClick={() => setInputTypeActive("todoItem")}
+                    // onClick={() => setInputTypeActive("todoItem")}
                     onChange={(e) => setUserEditText(e.target.value)}
-                    onKeyDown={(e) => updateTodo(e)}
-                    onBlur={() => updateTodo(true)}
+                    onKeyDown={(e) => updateTodoHandler(e)}
+                    onBlur={() => updateTodoHandler(true)}
                     placeholder="to-do"
                     variant="unstyled"
                 />
@@ -123,10 +121,10 @@ const ComponentTodoPageContent = ({
                 <ComponentModalConfirmDelete deleteTodo={deleteTodo} />
                 <Input
                     value={userEditText === "-1" ? itemContent : userEditText}
-                    onClick={() => setInputTypeActive("textItem")}
+                    // onClick={() => setInputTypeActive("textItem")}
                     onChange={(e) => setUserEditText(e.target.value)}
-                    onKeyDown={(e) => updateTodo(e)}
-                    onBlur={() => updateTodo(true)}
+                    onKeyDown={(e) => updateTodoHandler(e)}
+                    onBlur={() => updateTodoHandler(true)}
                     placeholder="text"
                     variant="unstyled"
                 />

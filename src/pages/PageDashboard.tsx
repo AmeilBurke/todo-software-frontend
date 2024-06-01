@@ -6,6 +6,7 @@ import GetAllTodoPages from "../apiRequests/GET/GetAllTodoPages";
 import GetAllTodosForAPage from "../apiRequests/GET/GetAllTodosForAPage";
 import apiRequestCreateNewTodoPage from "../apiRequests/POST/apiRequestCreateNewTodoPage";
 import ComponentActivePageInfo from "../components/ComponentsPageDashboard/ComponentActivePageInfo";
+import apiRequestUpdateActiveTodoPage from "../apiRequests/UPDATE/apiRequestUpdateActiveTodoPage";
 
 const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
 
@@ -14,16 +15,32 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
   const [activeTodoPageInfo, setActiveTodoPageInfo] = useState<TodoPage | undefined>(undefined);
   const [activeTodoPageTodos, setActiveTodoPageTodos] = useState<Todo[] | undefined>(undefined);
 
+  const [pageHeading, setPageHeading] = useState<string>("-1");
+
   const getTodoPagesFromApi = async () => {
     const apiResponse = await GetAllTodoPages(accountInfo.account_id);
-    // console.log(apiResponse);
 
     if (typeof apiResponse !== 'string') {
-      setAllTodoPagesFromApi(apiResponse);
+      sortByDate(apiResponse);
     }
   }
 
-  // same thing you did for active todos in a list needs to be done for the todoPages
+  const sortByDate = (todoPages: TodoPage[]) => {
+    const todoPagesWithDates = todoPages.map((todoPage) => {
+      if (todoPage.todoPage_createdDate) {
+        const dateSplit = todoPage.todoPage_createdDate.split('-');
+        const todoPageDateObject = new Date(Number(dateSplit[2]), Number(dateSplit[1]) - 1, Number(dateSplit[0]));
+
+        let todoPageUpdated: any = todoPage;
+        todoPageUpdated.todoPage_createdDate = todoPageDateObject;
+        return todoPageUpdated;
+      }
+    });
+
+    const sortedDates = todoPagesWithDates.sort((a: any, b: any) => { return a.todoPage_createdDate.getTime() - b.todoPage_createdDate.getTime() });
+    setAllTodoPagesFromApi(sortedDates);
+  }
+
   const getTodosForActivePageFromApi = async (givenPageId?: number) => {
     if (activeTodoPageInfo !== undefined) {
       let apiResponse;
@@ -48,7 +65,8 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
       await getTodoPagesFromApi();
       await getTodosForActivePageFromApi();
     }
-    // redone gets, now need to do creates, not forgetting changing activePageInfo & running getTodosForActivePageFromApi()
+    // redone gets, redone creates, need to do refactor creating todos
+    // not forgetting changing activePageInfo & running getTodosForActivePageFromApi()
   }
 
   const changeActiveTodoPage = async (todoPageId: number) => {
@@ -61,8 +79,20 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
       });
 
       setActiveTodoPageInfo(activeTodoPage[0]);
+      setPageHeading(activeTodoPage[0].todoPage_heading);
       await getTodosForActivePageFromApi(activeTodoPage[0].todoPage_id);
     }
+  }
+
+  const changePageHeading = async (userText: string) => {
+    setPageHeading(userText);
+
+    await apiRequestUpdateActiveTodoPage({
+      todoPage_id: Number(activeTodoPageInfo?.todoPage_id),
+      todoPage_heading: userText === '' ? 'untitled' : userText,
+      todoPage_createdBy: Number(activeTodoPageInfo?.todoPage_createdBy),
+      todoPage_isPageArchived: Boolean(activeTodoPageInfo?.todoPage_isPageArchived),
+    }).then(async () => { await getTodoPagesFromApi() });
   }
 
 
@@ -82,8 +112,6 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
       getTodosForActivePageFromApi();
     }
 
-    // console.log(activeTodoPageTodos);
-
   }, [initialPageLoad, allTodoPagesFromApi, activeTodoPageInfo, activeTodoPageTodos]);
 
   return (
@@ -92,24 +120,32 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
         {
           allTodoPagesFromApi !== undefined
             ? allTodoPagesFromApi.map((todoPage: TodoPage) => {
-              return <Button onClick={() => changeActiveTodoPage(todoPage.todoPage_id)} key={todoPage.todoPage_id}>{todoPage.todoPage_heading}</Button>
+              return (
+                <Button onClick={() => changeActiveTodoPage(todoPage.todoPage_id)} key={todoPage.todoPage_id}>
+                  {
+                    typeof activeTodoPageInfo !== undefined &&
+                      todoPage.todoPage_id === activeTodoPageInfo?.todoPage_id &&
+                      pageHeading === ''
+
+                      ? 'untitled'
+                      : todoPage.todoPage_heading
+                  }
+                </Button>)
             })
             : <></>
         }
         <Button onClick={createNewTodoPage}>Create new page</Button>
       </VStack>
-      {
-        <ComponentActivePageInfo
-          activeTodoPageInfo={activeTodoPageInfo}
-          activeTodoPageTodos={activeTodoPageTodos}
-          setActiveTodoPageTodos={setActiveTodoPageTodos}
-          getTodoPagesFromApi={getTodoPagesFromApi}
-          getTodosForActivePageFromApi={getTodosForActivePageFromApi}
-        />
-      }
-      <VStack>
-        <Box></Box>
-      </VStack>
+
+      <ComponentActivePageInfo
+        activeTodoPageInfo={activeTodoPageInfo}
+        activeTodoPageTodos={activeTodoPageTodos}
+        getTodoPagesFromApi={getTodoPagesFromApi}
+        getTodosForActivePageFromApi={getTodosForActivePageFromApi}
+        pageHeading={pageHeading}
+        setPageHeading={setPageHeading}
+        changePageHeading={changePageHeading}
+      />
     </HStack>
   )
 }

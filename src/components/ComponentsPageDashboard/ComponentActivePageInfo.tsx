@@ -2,23 +2,24 @@ import { VStack, Input, Text, Divider } from '@chakra-ui/react'
 import { TodoPage, Todo } from '../../types/TypeIndex'
 import { useEffect, useState } from 'react';
 import ComponentTodoPageContent from './ComponentTodoPageContent';
-import apiRequestUpdateActiveTodoPage from '../../apiRequests/UPDATE/apiRequestUpdateActiveTodoPage';
 
 const ComponentActivePageInfo = ({
     activeTodoPageInfo,
     activeTodoPageTodos,
-    setActiveTodoPageTodos,
-    getTodoPagesFromApi,
-    getTodosForActivePageFromApi
+    getTodosForActivePageFromApi,
+    pageHeading,
+    setPageHeading,
+    changePageHeading
 }: {
     activeTodoPageInfo: TodoPage | undefined,
     activeTodoPageTodos: Todo[] | undefined,
-    setActiveTodoPageTodos: React.Dispatch<React.SetStateAction<Todo[] | undefined>>,
     getTodoPagesFromApi: () => Promise<void>,
     getTodosForActivePageFromApi: (givenPageId?: number) => Promise<void>,
+    pageHeading: string,
+    setPageHeading: React.Dispatch<React.SetStateAction<string>>,
+    changePageHeading: (userText: string) => Promise<void>
 }) => {
 
-    const [pageHeading, setPageHeading] = useState<string>("-1");
     const [pageDescription, setPageDescription] = useState<string | undefined>();
     const [isPageArchived, setIsPageArchived] = useState<boolean>();
 
@@ -38,38 +39,11 @@ const ComponentActivePageInfo = ({
 
     }, [pageHeading, pageDescription, isPageArchived]);
 
-    const changePageHeading = async (userText: string) => {
-        console.log(userText);
-        console.log({
-            todoPage_id: Number(activeTodoPageInfo?.todoPage_id),
-            todoPage_heading: userText,
-            todoPage_createdBy: Number(activeTodoPageInfo?.todoPage_createdBy),
-            todoPage_isPageArchived: Boolean(activeTodoPageInfo?.todoPage_isPageArchived),
-        })
-
-        setPageHeading(userText);
-
-        console.log({
-            todoPage_id: Number(activeTodoPageInfo?.todoPage_id),
-            todoPage_heading: userText,
-            todoPage_createdBy: Number(activeTodoPageInfo?.todoPage_createdBy),
-            todoPage_isPageArchived: Boolean(activeTodoPageInfo?.todoPage_isPageArchived)
-        })
-
-        await apiRequestUpdateActiveTodoPage({
-            todoPage_id: Number(activeTodoPageInfo?.todoPage_id),
-            todoPage_heading: userText,
-            todoPage_createdBy: Number(activeTodoPageInfo?.todoPage_createdBy),
-            todoPage_isPageArchived: Boolean(activeTodoPageInfo?.todoPage_isPageArchived),
-        }).then(() => { getTodoPagesFromApi() });
-    }
-
-
     return (
         <VStack>
             {
                 activeTodoPageInfo !== undefined
-                    ? <><Input onChange={(e) => changePageHeading(e.target.value)} value={pageHeading === "-1" ? activeTodoPageInfo.todoPage_heading : pageHeading} placeholder={activeTodoPageInfo.todoPage_heading} variant="unstyled"></Input>
+                    ? <><Input onChange={(e) => changePageHeading(e.target.value)} value={pageHeading === "-1" ? activeTodoPageInfo.todoPage_heading : pageHeading} placeholder={pageHeading === '' ? 'untitled' : activeTodoPageInfo.todoPage_heading} variant="unstyled"></Input>
                         <Divider /></>
                     : <Text>Create a new page by using the 'Create new page' button.</Text>
             }

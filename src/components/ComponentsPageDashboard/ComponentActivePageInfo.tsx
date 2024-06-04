@@ -13,8 +13,8 @@ const ComponentActivePageInfo = ({
 }: {
     activeTodoPageInfo: TodoPage | undefined,
     activeTodoPageTodos: Todo[] | undefined,
-    getTodoPagesFromApi: () => Promise<void>,
     getTodosForActivePageFromApi: (givenPageId?: number) => Promise<void>,
+    getTodoPagesFromApi: () => Promise<void>,
     pageHeading: string,
     setPageHeading: React.Dispatch<React.SetStateAction<string>>,
     changePageHeading: (userText: string) => Promise<void>

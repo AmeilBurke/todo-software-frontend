@@ -1,12 +1,13 @@
 import { useEffect, useState, } from "react"
 import { Account, Todo, TodoPage, } from "../types/TypeIndex"
-import { HStack, VStack, Box, Button } from "@chakra-ui/react"
+import { HStack, VStack, Button } from "@chakra-ui/react"
 import '../index.css';
 import GetAllTodoPages from "../apiRequests/GET/GetAllTodoPages";
 import GetAllTodosForAPage from "../apiRequests/GET/GetAllTodosForAPage";
 import apiRequestCreateNewTodoPage from "../apiRequests/POST/apiRequestCreateNewTodoPage";
 import ComponentActivePageInfo from "../components/ComponentsPageDashboard/ComponentActivePageInfo";
 import apiRequestUpdateActiveTodoPage from "../apiRequests/UPDATE/apiRequestUpdateActiveTodoPage";
+import ComponentAddNewItemInput from "../components/ComponentsPageDashboard/ComponentAddNewItemInput";
 
 const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
 
@@ -145,6 +146,11 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
         pageHeading={pageHeading}
         setPageHeading={setPageHeading}
         changePageHeading={changePageHeading}
+      />
+      <ComponentAddNewItemInput
+        activeTodoPageInfo={activeTodoPageInfo}
+        activeTodoPageTodos={activeTodoPageTodos}
+        setActiveTodoPageTodos={setActiveTodoPageTodos}
       />
     </HStack>
   )

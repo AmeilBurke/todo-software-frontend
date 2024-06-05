@@ -8,6 +8,9 @@ import apiRequestCreateNewTodoPage from "../apiRequests/POST/apiRequestCreateNew
 import ComponentActivePageInfo from "../components/ComponentsPageDashboard/ComponentActivePageInfo";
 import apiRequestUpdateActiveTodoPage from "../apiRequests/UPDATE/apiRequestUpdateActiveTodoPage";
 import ComponentAddNewItemInput from "../components/ComponentsPageDashboard/ComponentAddNewItemInput";
+import ComponentSettingsMenu from "../components/ComponentsPageDashboard/ComponentSettingsMenu";
+import apiRequestDeleteIndividualTodoPage from "../apiRequests/DELETE/apiRequestDeleteIndividualTodoPage";
+import toast from "react-hot-toast";
 
 const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
 
@@ -15,8 +18,8 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
   const [allTodoPagesFromApi, setAllTodoPagesFromApi] = useState<TodoPage[] | undefined>(undefined);
   const [activeTodoPageInfo, setActiveTodoPageInfo] = useState<TodoPage | undefined>(undefined);
   const [activeTodoPageTodos, setActiveTodoPageTodos] = useState<Todo[] | undefined>(undefined);
-
   const [pageHeading, setPageHeading] = useState<string>("-1");
+  const [pageSubHeading, setPageSubHeading] = useState<string>("");
 
   const getTodoPagesFromApi = async () => {
     const apiResponse = await GetAllTodoPages(accountInfo.account_id);
@@ -65,9 +68,8 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
       setActiveTodoPageInfo(apiRepsonse);
       await getTodoPagesFromApi();
       await getTodosForActivePageFromApi();
+      setPageHeading("-1");
     }
-    // redone gets, redone creates, need to do refactor creating todos
-    // not forgetting changing activePageInfo & running getTodosForActivePageFromApi()
   }
 
   const changeActiveTodoPage = async (todoPageId: number) => {
@@ -81,6 +83,13 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
 
       setActiveTodoPageInfo(activeTodoPage[0]);
       setPageHeading(activeTodoPage[0].todoPage_heading);
+
+      if (activeTodoPage[0].todoPage_description) {
+        setPageSubHeading(activeTodoPage[0].todoPage_heading);
+      } else {
+        setPageSubHeading("");
+      }
+
       await getTodosForActivePageFromApi(activeTodoPage[0].todoPage_id);
     }
   }
@@ -94,6 +103,30 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
       todoPage_createdBy: Number(activeTodoPageInfo?.todoPage_createdBy),
       todoPage_isPageArchived: Boolean(activeTodoPageInfo?.todoPage_isPageArchived),
     }).then(async () => { await getTodoPagesFromApi() });
+  }
+
+  const changePageSubHeading = async (userText: string) => {
+    setPageSubHeading(userText);
+
+    await apiRequestUpdateActiveTodoPage({
+      todoPage_id: Number(activeTodoPageInfo?.todoPage_id),
+      todoPage_heading: String(activeTodoPageInfo?.todoPage_heading),
+      todoPage_description: String(userText),
+      todoPage_createdBy: Number(activeTodoPageInfo?.todoPage_createdBy),
+      todoPage_isPageArchived: Boolean(activeTodoPageInfo?.todoPage_isPageArchived),
+    }).then(async () => { await getTodoPagesFromApi() });
+  }
+
+  const deleteTodoPage = async () => {
+    if (activeTodoPageInfo !== undefined && allTodoPagesFromApi !== undefined) {
+      await apiRequestDeleteIndividualTodoPage(activeTodoPageInfo.todoPage_id);
+      toast.success("Page deleted.");
+      setActiveTodoPageInfo(allTodoPagesFromApi[0]);
+      getTodoPagesFromApi();
+      setPageHeading(allTodoPagesFromApi[0].todoPage_heading);
+      setActiveTodoPageTodos(undefined);
+
+    }
   }
 
 
@@ -118,24 +151,30 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
   return (
     <HStack justifyContent="space-evenly" spacing="0">
       <VStack>
+        <VStack>
+          {
+            allTodoPagesFromApi !== undefined
+              ? allTodoPagesFromApi.map((todoPage: TodoPage) => {
+                return (
+                  <Button onClick={() => changeActiveTodoPage(todoPage.todoPage_id)} key={todoPage.todoPage_id}>
+                    {
+                      typeof activeTodoPageInfo !== undefined &&
+                        todoPage.todoPage_id === activeTodoPageInfo?.todoPage_id &&
+                        pageHeading === ''
+                        ? 'untitled'
+                        : todoPage.todoPage_heading
+                    }
+                  </Button>)
+              })
+              : <></>
+          }
+          <Button onClick={createNewTodoPage}>Create new page</Button>
+        </VStack>
         {
-          allTodoPagesFromApi !== undefined
-            ? allTodoPagesFromApi.map((todoPage: TodoPage) => {
-              return (
-                <Button onClick={() => changeActiveTodoPage(todoPage.todoPage_id)} key={todoPage.todoPage_id}>
-                  {
-                    typeof activeTodoPageInfo !== undefined &&
-                      todoPage.todoPage_id === activeTodoPageInfo?.todoPage_id &&
-                      pageHeading === ''
-
-                      ? 'untitled'
-                      : todoPage.todoPage_heading
-                  }
-                </Button>)
-            })
+          activeTodoPageInfo !== undefined
+            ? <ComponentSettingsMenu deleteTodoPage={deleteTodoPage} />
             : <></>
         }
-        <Button onClick={createNewTodoPage}>Create new page</Button>
       </VStack>
 
       <ComponentActivePageInfo
@@ -146,12 +185,19 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
         pageHeading={pageHeading}
         setPageHeading={setPageHeading}
         changePageHeading={changePageHeading}
+        pageSubHeading={pageSubHeading}
+        setPageSubHeading={setPageSubHeading}
+        changePageSubHeading={changePageSubHeading}
       />
-      <ComponentAddNewItemInput
-        activeTodoPageInfo={activeTodoPageInfo}
-        activeTodoPageTodos={activeTodoPageTodos}
-        setActiveTodoPageTodos={setActiveTodoPageTodos}
-      />
+      {
+        activeTodoPageInfo !== undefined
+          ? <ComponentAddNewItemInput
+            activeTodoPageInfo={activeTodoPageInfo}
+            activeTodoPageTodos={activeTodoPageTodos}
+            setActiveTodoPageTodos={setActiveTodoPageTodos}
+          />
+          : <></>
+      }
     </HStack>
   )
 }

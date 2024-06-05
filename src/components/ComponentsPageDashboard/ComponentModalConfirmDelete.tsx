@@ -1,5 +1,4 @@
 import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure } from '@chakra-ui/react'
-import React from 'react'
 import { TfiTrash } from 'react-icons/tfi';
 
 const ComponentModalConfirmDelete = ({ deleteTodo }: { deleteTodo: () => void }) => {

@@ -1,26 +1,20 @@
-import { Menu, MenuButton, Button, MenuList, MenuItem } from '@chakra-ui/react'
-import { TfiAngleDown } from 'react-icons/tfi'
-import { Todo, TodoPage } from '../../types/TypeIndex'
-import apiRequestDeleteIndividualTodoPage from '../../apiRequests/DELETE/apiRequestDeleteIndividualTodoPage'
+import { Menu, MenuButton, Button, MenuList, MenuItem } from '@chakra-ui/react';
+import { TfiAngleDown } from 'react-icons/tfi';
 
-
-// implementing delete active page
 const ComponentSettingsMenu = (
     {
         deleteTodoPage,
     }:
         {
-            deleteTodoPage: () => void
+            deleteTodoPage: () => Promise<void>
         }
 ) => {
 
     return (
         <Menu>
-            <MenuButton as={Button} rightIcon={<TfiAngleDown />}>
-                Actions
-            </MenuButton>
+            <MenuButton as={Button} rightIcon={<TfiAngleDown />}>Actions</MenuButton>
             <MenuList>
-                <MenuItem onClick={deleteTodoPage} >Delete Page</MenuItem>
+                <MenuItem onClick={deleteTodoPage}>Delete Page</MenuItem>
             </MenuList>
         </Menu>
     )

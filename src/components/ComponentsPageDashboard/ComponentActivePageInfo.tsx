@@ -9,7 +9,10 @@ const ComponentActivePageInfo = ({
     getTodosForActivePageFromApi,
     pageHeading,
     setPageHeading,
-    changePageHeading
+    changePageHeading,
+    pageSubHeading,
+    setPageSubHeading,
+    changePageSubHeading
 }: {
     activeTodoPageInfo: TodoPage | undefined,
     activeTodoPageTodos: Todo[] | undefined,
@@ -17,10 +20,13 @@ const ComponentActivePageInfo = ({
     getTodoPagesFromApi: () => Promise<void>,
     pageHeading: string,
     setPageHeading: React.Dispatch<React.SetStateAction<string>>,
-    changePageHeading: (userText: string) => Promise<void>
+    changePageHeading: (userText: string) => Promise<void>,
+    pageSubHeading: string | undefined,
+    setPageSubHeading: React.Dispatch<React.SetStateAction<string>>,
+    changePageSubHeading: (userText: string) => Promise<void>,
+
 }) => {
 
-    const [pageDescription, setPageDescription] = useState<string | undefined>();
     const [isPageArchived, setIsPageArchived] = useState<boolean>();
 
     useEffect(() => {
@@ -30,14 +36,14 @@ const ComponentActivePageInfo = ({
         }
 
         if (activeTodoPageInfo?.todoPage_description) {
-            setPageDescription(activeTodoPageInfo.todoPage_description);
+            setPageSubHeading(activeTodoPageInfo.todoPage_description);
         }
 
         if (activeTodoPageInfo?.todoPage_isPageArchived) {
             setIsPageArchived(activeTodoPageInfo.todoPage_isPageArchived);
         }
 
-    }, [pageHeading, pageDescription, isPageArchived]);
+    }, [pageHeading, isPageArchived]);
 
     return (
         <VStack>
@@ -48,9 +54,21 @@ const ComponentActivePageInfo = ({
                     : <Text>Create a new page by using the 'Create new page' button.</Text>
             }
             {
-                activeTodoPageInfo?.todoPage_description
-                    ? <Input onChange={(e) => setPageHeading(e.target.value)} value={pageDescription} placeholder={activeTodoPageInfo.todoPage_description} variant="unstyled">{activeTodoPageInfo.todoPage_description}</Input>
-                    : <Input onChange={(e) => setPageHeading(e.target.value)} value={pageDescription} placeholder='Put a description for the page here.' variant="unstyled"></Input>
+                activeTodoPageInfo === undefined
+                    ? <></>
+                    : <Input
+                        onChange={(e) => changePageSubHeading(e.target.value)}
+                        // need to figure out logic for this
+                        value={activeTodoPageInfo?.todoPage_description === "-1" ? "testing" : pageSubHeading}
+                        placeholder={activeTodoPageInfo?.todoPage_description === "-1" ? pageSubHeading : "Put a description for the page here."}
+                        variant="unstyled">
+                    </Input>
+
+
+
+                // : activeTodoPageInfo?.todoPage_description !== undefined
+                // ? <Input onChange={(e) => setPageSubHeading(e.target.value)} value={pageDescription} placeholder={activeTodoPageInfo.todoPage_description} variant="unstyled"></Input>
+                // : <Input onChange={(e) => setPageSubHeading(e.target.value)} value={pageDescription} placeholder='Put a description for the page here.' variant="unstyled"></Input>
             }
             {
                 activeTodoPageInfo !== undefined && activeTodoPageTodos !== undefined

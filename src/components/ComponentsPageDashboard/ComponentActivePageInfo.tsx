@@ -49,8 +49,10 @@ const ComponentActivePageInfo = ({
         <VStack>
             {
                 activeTodoPageInfo !== undefined
-                    ? <><Input onChange={(e) => changePageHeading(e.target.value)} value={pageHeading === "-1" ? activeTodoPageInfo.todoPage_heading : pageHeading} placeholder={pageHeading === '' ? 'untitled' : activeTodoPageInfo.todoPage_heading} variant="unstyled"></Input>
-                        <Divider /></>
+                    ? <>
+                        <Input onChange={(e) => changePageHeading(e.target.value)} value={pageHeading === "-1" ? activeTodoPageInfo.todoPage_heading : pageHeading} placeholder={pageHeading === '' ? 'untitled' : activeTodoPageInfo.todoPage_heading} variant="unstyled"></Input>
+                        <Divider />
+                      </>
                     : <Text>Create a new page by using the 'Create new page' button.</Text>
             }
             {
@@ -58,17 +60,10 @@ const ComponentActivePageInfo = ({
                     ? <></>
                     : <Input
                         onChange={(e) => changePageSubHeading(e.target.value)}
-                        // need to figure out logic for this
                         value={activeTodoPageInfo?.todoPage_description === "-1" ? "testing" : pageSubHeading}
                         placeholder={activeTodoPageInfo?.todoPage_description === "-1" ? pageSubHeading : "Put a description for the page here."}
                         variant="unstyled">
                     </Input>
-
-
-
-                // : activeTodoPageInfo?.todoPage_description !== undefined
-                // ? <Input onChange={(e) => setPageSubHeading(e.target.value)} value={pageDescription} placeholder={activeTodoPageInfo.todoPage_description} variant="unstyled"></Input>
-                // : <Input onChange={(e) => setPageSubHeading(e.target.value)} value={pageDescription} placeholder='Put a description for the page here.' variant="unstyled"></Input>
             }
             {
                 activeTodoPageInfo !== undefined && activeTodoPageTodos !== undefined

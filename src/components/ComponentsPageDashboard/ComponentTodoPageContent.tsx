@@ -14,7 +14,7 @@ import ComponentModalConfirmDelete from "./ComponentModalConfirmDelete";
 const ComponentTodoPageContent = ({
     todo,
     activeTodoPageTodos,
-    getTodosForActivePageFromApi
+    getTodosForActivePageFromApi,
 }: {
     todo: Todo,
     activeTodoPageTodos: Todo[],
@@ -23,7 +23,6 @@ const ComponentTodoPageContent = ({
     const [userEditText, setUserEditText] = useState<string>("-1");
     const [itemContent, setItemContent] = useState<string>("");
     const [itemPrefix, setItemPrefix] = useState<string>("");
-    // const [inputTypeActive, setInputTypeActive] = useState<string>("");
 
     useEffect(() => {
         let firstDashIndex = todo.todo_content.indexOf("-");
@@ -70,6 +69,10 @@ const ComponentTodoPageContent = ({
         });
     }
 
+    const setIsTodoCompleted = async () => {
+        await apiRequestUpdateActiveTodoList({ todoId: Number(todo.todo_id), todoContent: todo.todo_content, todoIsCompleted: !todo.todo_isCompleted });
+    }
+
     const deleteTodo = async () => {
         await apiRequestDeleteIndividualTodo(Number(todo.todo_id)).then(async () => {
             await getTodosForActivePageFromApi(todo.todoPage_id);
@@ -84,7 +87,6 @@ const ComponentTodoPageContent = ({
                     <ListItem>
                         <Input
                             value={userEditText === "-1" ? itemContent : userEditText}
-                            // onClick={() => setInputTypeActive("listItem")}
                             onChange={(e) => setUserEditText(e.target.value)}
                             onKeyDown={(e) => updateTodoHandler(e)}
                             onBlur={() => updateTodoHandler(true)}
@@ -101,10 +103,14 @@ const ComponentTodoPageContent = ({
         return (
             <HStack>
                 <ComponentModalConfirmDelete deleteTodo={deleteTodo} />
-                <Checkbox></Checkbox>
+                <Checkbox
+                    defaultChecked={todo.todo_isCompleted === true ? true : false}
+                    onChange={setIsTodoCompleted}
+                >
+
+                </Checkbox>
                 <Input
                     value={userEditText === "-1" ? itemContent : userEditText}
-                    // onClick={() => setInputTypeActive("todoItem")}
                     onChange={(e) => setUserEditText(e.target.value)}
                     onKeyDown={(e) => updateTodoHandler(e)}
                     onBlur={() => updateTodoHandler(true)}
@@ -121,7 +127,6 @@ const ComponentTodoPageContent = ({
                 <ComponentModalConfirmDelete deleteTodo={deleteTodo} />
                 <Input
                     value={userEditText === "-1" ? itemContent : userEditText}
-                    // onClick={() => setInputTypeActive("textItem")}
                     onChange={(e) => setUserEditText(e.target.value)}
                     onKeyDown={(e) => updateTodoHandler(e)}
                     onBlur={() => updateTodoHandler(true)}

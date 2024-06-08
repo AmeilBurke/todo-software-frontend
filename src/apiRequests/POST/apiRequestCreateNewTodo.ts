@@ -11,6 +11,7 @@ export default async function apiRequestCreateNewTodo(
       {
         todoContent: todoContent.todo_content,
         todoPageId: todoContent.todoPage_id,
+        todoPageCreatedDate: todoContent.todo_dateCreated,
       },
       {
         headers: {

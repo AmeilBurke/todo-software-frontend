@@ -25,24 +25,21 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
     const apiResponse = await GetAllTodoPages(accountInfo.account_id);
 
     if (typeof apiResponse !== 'string') {
-      sortByDate(apiResponse);
+      sortTodoPagesByDate(apiResponse);
+      // console.log(apiResponse);
+      console.log(activeTodoPageInfo);
     }
   }
 
-  const sortByDate = (todoPages: TodoPage[]) => {
+  const sortTodoPagesByDate = (todoPages: TodoPage[]) => {
     const todoPagesWithDates = todoPages.map((todoPage) => {
       if (todoPage.todoPage_createdDate) {
         const dateTimeSplit = todoPage.todoPage_createdDate.split(',');
-        // console.log(dateTimeSplit);
 
         const dateSplit = dateTimeSplit[0].split('/');
         const timeSplit = dateTimeSplit[1].split('-');
 
-        // console.log(dateSplit);
-        // console.log(timeSplit);
-
         const todoPageDateObject = new Date(Number(dateSplit[2]), Number(dateSplit[1]) - 1, Number(dateSplit[0]), Number(timeSplit[0]), Number(timeSplit[1]), Number(timeSplit[2]));
-        // console.log(todoPageDateObject);
 
         let todoPageUpdated: any = todoPage;
         todoPageUpdated.todoPage_createdDate = todoPageDateObject;
@@ -52,21 +49,27 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
 
     const sortedDates = todoPagesWithDates.sort((a: any, b: any) => { return a.todoPage_createdDate.getTime() - b.todoPage_createdDate.getTime() });
     setAllTodoPagesFromApi(sortedDates);
+  }
 
+  const sortTodosForActivePageByDate = (todos: Todo[]) => {
 
-    // const todoPagesWithDates = todoPages.map((todoPage) => {
-    //   if (todoPage.todoPage_createdDate) {
-    //     const dateSplit = todoPage.todoPage_createdDate.split('-');
-    //     const todoPageDateObject = new Date(Number(dateSplit[2]), Number(dateSplit[1]) - 1, Number(dateSplit[0]));
+    const todosWithDates = todos.map((todo: Todo) => {
 
-    //     let todoPageUpdated: any = todoPage;
-    //     todoPageUpdated.todoPage_createdDate = todoPageDateObject;
-    //     return todoPageUpdated;
-    //   }
-    // });
+      if (typeof todo.todo_dateCreated === "string") {
+        const dateTimeSplit = todo.todo_dateCreated.split(",");
+        const dateSplit = dateTimeSplit[0].split('/');
+        const timeSplit = dateTimeSplit[1].split('-');
 
-    // const sortedDates = todoPagesWithDates.sort((a: any, b: any) => { return a.todoPage_createdDate.getTime() - b.todoPage_createdDate.getTime() });
-    // setAllTodoPagesFromApi(sortedDates);
+        const todoDateObject = new Date(Number(dateSplit[2]), Number(dateSplit[1]) - 1, Number(dateSplit[0]), Number(timeSplit[0]), Number(timeSplit[1]), Number(timeSplit[2]));
+
+        let todoUpdated: any = todo;
+        todoUpdated.todo_createdDate = todoDateObject;
+        return todoUpdated;
+      }
+    });
+
+    const sortedDates = todosWithDates.sort((a: any, b: any) => { return a.todo_createdDate.getTime() - b.todo_createdDate.getTime() });
+    setActiveTodoPageTodos(sortedDates);
   }
 
   const getTodosForActivePageFromApi = async (givenPageId?: number) => {
@@ -77,10 +80,9 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
       } else {
         apiResponse = await GetAllTodosForAPage(activeTodoPageInfo.todoPage_id);
       }
-      // console.log(apiReponse);
 
       if (typeof apiResponse !== 'string') {
-        setActiveTodoPageTodos(apiResponse);
+        sortTodosForActivePageByDate(apiResponse);
       }
     }
   }
@@ -145,11 +147,16 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
     if (activeTodoPageInfo !== undefined && allTodoPagesFromApi !== undefined) {
       await apiRequestDeleteIndividualTodoPage(activeTodoPageInfo.todoPage_id);
       toast.success("Page deleted.");
-      setActiveTodoPageInfo(allTodoPagesFromApi[0]);
+      
+      
       getTodoPagesFromApi();
       setPageHeading(allTodoPagesFromApi[0].todoPage_heading);
+      
       setActiveTodoPageTodos(undefined);
-
+      setActiveTodoPageInfo(undefined);
+      setAllTodoPagesFromApi(undefined);
+      // figure out how to check type of empty allTodoPagesFromApi[0]
+      // console.log(allTodoPagesFromApi[0]);
     }
   }
 
@@ -169,7 +176,6 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
       setActiveTodoPageInfo(allTodoPagesFromApi[0]);
       getTodosForActivePageFromApi();
     }
-
   }, [initialPageLoad, allTodoPagesFromApi, activeTodoPageInfo, activeTodoPageTodos]);
 
   return (

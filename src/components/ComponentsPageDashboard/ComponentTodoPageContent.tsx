@@ -54,9 +54,9 @@ const ComponentTodoPageContent = ({
         let allActivePageTodos = activeTodoPageTodos;
 
         if (userEditText === "-1") {
-            allActivePageTodos[allActivePageTodoIndex] = { todo_id: todo.todo_id, todo_content: todo.todo_content, todoPage_id: todo.todoPage_id }
+            allActivePageTodos[allActivePageTodoIndex] = { todo_id: todo.todo_id, todo_content: todo.todo_content, todo_createdDate: todo.todo_createdDate, todoPage_id: todo.todoPage_id }
         } else {
-            allActivePageTodos[allActivePageTodoIndex] = { todo_id: todo.todo_id, todo_content: `${itemPrefix}-${userEditText}`, todoPage_id: todo.todoPage_id }
+            allActivePageTodos[allActivePageTodoIndex] = { todo_id: todo.todo_id, todo_content: `${itemPrefix}-${userEditText}`, todo_createdDate: todo.todo_createdDate, todoPage_id: todo.todoPage_id }
         }
 
         allActivePageTodos.map(async (todoElement) => {

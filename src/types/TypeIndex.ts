@@ -12,6 +12,7 @@ export type Todo = {
   todo_isCompleted?: boolean;
   todo_dateCompleted?: string;
   todo_completedBy?: number;
+  todo_dateCreated: string;
   todoPage_id: number;
 };
 

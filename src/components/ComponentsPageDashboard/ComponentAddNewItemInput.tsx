@@ -8,10 +8,12 @@ const ComponentAddNewItemInput = ({
   activeTodoPageInfo,
   activeTodoPageTodos,
   setActiveTodoPageTodos,
+  // sortTodosForActivePageByDate
 }: {
   activeTodoPageInfo: TodoPage | undefined,
   activeTodoPageTodos: Todo[] | undefined,
   setActiveTodoPageTodos: React.Dispatch<React.SetStateAction<Todo[] | undefined>>,
+  // sortTodosForActivePageByDate: (todos: Todo[]) => void,
 }) => {
   const [userInputText, setUserInputText] = useState<string>("");
   const [userInputListItem, setUserInputListItem] = useState<string>("");
@@ -24,10 +26,12 @@ const ComponentAddNewItemInput = ({
     if (event.key === "Enter") {
       let apiResponse: any;
       event.preventDefault();
+      console.log("test");
 
       if (inputType === "text") {
         apiResponse = await apiRequestCreateNewTodo({
           todo_content: `t-${userInputText}`,
+          todo_dateCreated: String(activeTodoPageInfo?.todoPage_createdDate),
           todoPage_id: Number(activeTodoPageInfo?.todoPage_id),
         });
       }
@@ -35,6 +39,7 @@ const ComponentAddNewItemInput = ({
       if (inputType === "listItem") {
         apiResponse = await apiRequestCreateNewTodo({
           todo_content: `li-${userInputListItem}`,
+          todo_dateCreated: String(activeTodoPageInfo?.todoPage_createdDate),
           todoPage_id: Number(activeTodoPageInfo?.todoPage_id),
         });
       }
@@ -42,12 +47,17 @@ const ComponentAddNewItemInput = ({
       if (inputType === "todoItem") {
         apiResponse = await apiRequestCreateNewTodo({
           todo_content: `c-${userInputTodoItem}`,
+          todo_dateCreated: String(activeTodoPageInfo?.todoPage_createdDate),
           todoPage_id: Number(activeTodoPageInfo?.todoPage_id),
         });
       }
 
+      console.log(apiResponse);
+      console.log(activeTodoPageTodos);
+
       if (typeof apiResponse !== "string" && activeTodoPageTodos !== undefined) {
         setActiveTodoPageTodos([...activeTodoPageTodos, apiResponse]);
+        // sortTodosForActivePageByDate([...activeTodoPageTodos, apiResponse]);
         setUserInputText("");
         setUserInputListItem("");
         setUserInputTodoItem("");

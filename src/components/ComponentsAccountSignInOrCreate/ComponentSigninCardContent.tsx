@@ -46,7 +46,6 @@ const ComponentSigninCardContent = ({
           await GetFullProfileInformation(isJWTTokenValidResponse.sub);
         if (typeof fullProfileInfoinformationResponse !== "string") {
           setAccountInfo(fullProfileInfoinformationResponse);
-          // console.log(fullProfileInfoinformationResponse);
           toast.success(`welcome ${fullProfileInfoinformationResponse.account_username}`);
         }
       }
@@ -59,9 +58,9 @@ const ComponentSigninCardContent = ({
       <VStack w="100%" mb="4" spacing="4" >
         <Input placeholder="Email" onChange={(event) => handleUserEmailInput(event.target.value)} />
         <Input placeholder="Password" type="password" onChange={(event) => handleUserPasswordInput(event.target.value)} />
-        <VStack spacing="8">
-          <Button onClick={() => getJWTTokenFromBackend(userGivenEmail, userGivenPassword)}>Sign In</Button>
-          <Button onClick={() => setCreateAccount(true)}>I don't have an account</Button>
+        <VStack w="full" spacing="8">
+          <Button w={["full"]} onClick={() => getJWTTokenFromBackend(userGivenEmail, userGivenPassword)} colorScheme="green" >Sign In</Button>
+          <Button w={["full"]} onClick={() => setCreateAccount(true)}>I don't have an account</Button>
         </VStack>
       </VStack>
     </VStack>

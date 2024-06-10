@@ -12,6 +12,8 @@ import ComponentSettingsMenu from "../components/ComponentsPageDashboard/Compone
 import apiRequestDeleteIndividualTodoPage from "../apiRequests/DELETE/apiRequestDeleteIndividualTodoPage";
 import toast from "react-hot-toast";
 
+// TODO: design html & css
+
 const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
 
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
@@ -155,8 +157,6 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
       setActiveTodoPageTodos(undefined);
       setActiveTodoPageInfo(undefined);
       setAllTodoPagesFromApi(undefined);
-      // figure out how to check type of empty allTodoPagesFromApi[0]
-      // console.log(allTodoPagesFromApi[0]);
     }
   }
 

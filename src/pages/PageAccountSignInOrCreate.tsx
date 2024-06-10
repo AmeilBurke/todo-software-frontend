@@ -25,7 +25,7 @@ const PageAccountSignInOrCreate = ({
   return (
     <HStack position="relative" h="100vh" w="100vw" justifyContent="space-around">
       <Image position="absolute" zIndex="1" h="100%" w="100%" objectFit="cover" filter="auto" brightness="50%" src={signInImg} alt="sign-in image" />
-      <Box></Box>
+      <Box display={["none", null, null, "block"]} ></Box>
       <Box position="relative" zIndex="2" height="fit-content" width="fit-content" py="8" px="4" rounded="12" bg="white" shadow="2xl" >
         <VStack>
           <Heading mb="4">Ahead Today</Heading>

@@ -46,9 +46,9 @@ const ComponentCreateAccountCardContent = ({
         <Input placeholder="Email" onChange={(event) => setUserEmail(event.target.value)} />
         <Input placeholder="Password" type="password" onChange={(event) => setUserPassword(event.target.value)} />
       </VStack>
-      <VStack spacing="8">
-        <Button onClick={createAccountHandler}>Create Account</Button>
-        <Button onClick={() => setCreateAccount(false)}>I have an account</Button>
+      <VStack w="100%" spacing="8">
+        <Button w={["100%"]} onClick={createAccountHandler} colorScheme="green" >Create Account</Button>
+        <Button w={["100%"]} onClick={() => setCreateAccount(false)}>I have an account</Button>
       </VStack>
     </VStack>
   );

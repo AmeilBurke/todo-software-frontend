@@ -4,16 +4,18 @@ import { TfiAngleDown } from 'react-icons/tfi';
 const ComponentSettingsMenu = (
     {
         deleteTodoPage,
+        onCloseDrawer,
     }:
         {
-            deleteTodoPage: () => Promise<void>
+            deleteTodoPage: () => Promise<void>,
+            onCloseDrawer: () => void,
         }
 ) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (
         <Menu>
-            <MenuButton as={Button} rightIcon={<TfiAngleDown />}>Actions</MenuButton>
+            <MenuButton as={Button} mb={[8]} rightIcon={<TfiAngleDown />}>Page Actions</MenuButton>
             <MenuList>
                 <>
                     <MenuItem onClick={onOpen}>Delete Page</MenuItem>
@@ -28,12 +30,7 @@ const ComponentSettingsMenu = (
 
                             <ModalFooter>
                                 <Button onClick={onClose} variant='ghost'>Cancel</Button>
-                                <Button colorScheme='red' mr={3} onClick={() => {
-                                    deleteTodoPage();
-                                    onClose();
-                                }}>
-                                    Delete
-                                </Button>
+                                <Button colorScheme='red' mr={3} onClick={() => { deleteTodoPage(); onClose(); onCloseDrawer() }}>Delete</Button>
                             </ModalFooter>
                         </ModalContent>
                     </Modal>

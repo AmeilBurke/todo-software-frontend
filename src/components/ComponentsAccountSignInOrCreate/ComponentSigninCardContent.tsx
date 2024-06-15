@@ -58,7 +58,7 @@ const ComponentSigninCardContent = ({
       <VStack w="100%" mb="4" spacing="4" >
         <Input placeholder="Email" onChange={(event) => handleUserEmailInput(event.target.value)} />
         <Input placeholder="Password" type="password" onChange={(event) => handleUserPasswordInput(event.target.value)} />
-        <VStack w="full" spacing="8">
+        <VStack w="full" spacing="4">
           <Button w={["full"]} onClick={() => getJWTTokenFromBackend(userGivenEmail, userGivenPassword)} colorScheme="green" >Sign In</Button>
           <Button w={["full"]} onClick={() => setCreateAccount(true)}>I don't have an account</Button>
         </VStack>

@@ -66,8 +66,8 @@ const ComponentAddNewItemInput = ({
   };
 
   return (
-    <VStack>
-      <HStack>
+    <VStack w="100%">
+      <HStack w="100%">
         <TfiText />
         <Input
           value={userInputText}
@@ -79,7 +79,7 @@ const ComponentAddNewItemInput = ({
         />
       </HStack>
 
-      <HStack>
+      <HStack w="100%">
         <TfiMenuAlt />
         <Input
           value={userInputListItem}
@@ -90,7 +90,7 @@ const ComponentAddNewItemInput = ({
           placeholder="list item"
         />
       </HStack>
-      <HStack>
+      <HStack w="100%">
         <TfiCheckBox />
         <Input
           value={userInputTodoItem}

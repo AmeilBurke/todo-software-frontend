@@ -54,9 +54,9 @@ const ComponentTodoPageContent = ({
         let allActivePageTodos = activeTodoPageTodos;
 
         if (userEditText === "-1") {
-            allActivePageTodos[allActivePageTodoIndex] = { todo_id: todo.todo_id, todo_content: todo.todo_content, todo_createdDate: todo.todo_createdDate, todoPage_id: todo.todoPage_id }
+            allActivePageTodos[allActivePageTodoIndex] = { todo_id: todo.todo_id, todo_content: todo.todo_content, todo_dateCreated: todo.todo_dateCreated, todoPage_id: todo.todoPage_id }
         } else {
-            allActivePageTodos[allActivePageTodoIndex] = { todo_id: todo.todo_id, todo_content: `${itemPrefix}-${userEditText}`, todo_createdDate: todo.todo_createdDate, todoPage_id: todo.todoPage_id }
+            allActivePageTodos[allActivePageTodoIndex] = { todo_id: todo.todo_id, todo_content: `${itemPrefix}-${userEditText}`, todo_dateCreated: todo.todo_dateCreated, todoPage_id: todo.todoPage_id }
         }
 
         allActivePageTodos.map(async (todoElement) => {
@@ -81,11 +81,12 @@ const ComponentTodoPageContent = ({
 
     if (itemPrefix === "li") {
         return (
-            <HStack>
+            <HStack w="100%">
                 <ComponentModalConfirmDelete deleteTodo={deleteTodo} />
-                <UnorderedList>
-                    <ListItem>
+                <UnorderedList w="100%">
+                    <ListItem w="100%">
                         <Input
+                            w="100%"
                             value={userEditText === "-1" ? itemContent : userEditText}
                             onChange={(e) => setUserEditText(e.target.value)}
                             onKeyDown={(e) => updateTodoHandler(e)}
@@ -101,7 +102,7 @@ const ComponentTodoPageContent = ({
 
     if (itemPrefix === "c") {
         return (
-            <HStack>
+            <HStack w="100%">
                 <ComponentModalConfirmDelete deleteTodo={deleteTodo} />
                 <Checkbox
                     defaultChecked={todo.todo_isCompleted === true ? true : false}
@@ -110,6 +111,7 @@ const ComponentTodoPageContent = ({
 
                 </Checkbox>
                 <Input
+                    w="100%"
                     value={userEditText === "-1" ? itemContent : userEditText}
                     onChange={(e) => setUserEditText(e.target.value)}
                     onKeyDown={(e) => updateTodoHandler(e)}
@@ -126,6 +128,7 @@ const ComponentTodoPageContent = ({
             <HStack>
                 <ComponentModalConfirmDelete deleteTodo={deleteTodo} />
                 <Input
+                    w="100%"
                     value={userEditText === "-1" ? itemContent : userEditText}
                     onChange={(e) => setUserEditText(e.target.value)}
                     onKeyDown={(e) => updateTodoHandler(e)}

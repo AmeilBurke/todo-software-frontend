@@ -1,4 +1,4 @@
-import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure } from '@chakra-ui/react'
+import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, IconButton } from '@chakra-ui/react'
 import { TfiTrash } from 'react-icons/tfi';
 
 const ComponentModalConfirmDelete = ({ deleteTodo }: { deleteTodo: () => void }) => {
@@ -6,7 +6,7 @@ const ComponentModalConfirmDelete = ({ deleteTodo }: { deleteTodo: () => void })
 
     return (
         <>
-            <TfiTrash onClick={() => { onOpen() }} />
+            <IconButton size={["sm"]} icon={<TfiTrash />} bg="transparent" onClick={() => { onOpen(); }} aria-label={'delete todo button'} />
 
             <Modal isOpen={isOpen} onClose={onClose} isCentered={true} >
                 <ModalOverlay />
@@ -18,9 +18,7 @@ const ComponentModalConfirmDelete = ({ deleteTodo }: { deleteTodo: () => void })
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme='red' mr={3} onClick={() => { onClose(); deleteTodo() }}>
-                            Delete
-                        </Button>
+                        <Button colorScheme='red' mr={3} onClick={() => { onClose(); deleteTodo() }}>Delete</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

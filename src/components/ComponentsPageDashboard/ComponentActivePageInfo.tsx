@@ -1,4 +1,4 @@
-import { VStack, Input, Text, Divider } from '@chakra-ui/react'
+import { VStack, Input, Text, Divider, Box } from '@chakra-ui/react'
 import { TodoPage, Todo } from '../../types/TypeIndex'
 import { useEffect, useState } from 'react';
 import ComponentTodoPageContent from './ComponentTodoPageContent';
@@ -46,39 +46,51 @@ const ComponentActivePageInfo = ({
     }, [pageHeading, isPageArchived]);
 
     return (
-        <VStack>
+        <VStack w="100%">
             {
                 activeTodoPageInfo !== undefined
-                    ? <>
-                        <Input onChange={(e) => changePageHeading(e.target.value)} value={pageHeading === "-1" ? activeTodoPageInfo.todoPage_heading : pageHeading} placeholder={pageHeading === '' ? 'untitled' : activeTodoPageInfo.todoPage_heading} variant="unstyled"></Input>
-                        <Divider />
-                      </>
-                    : <Text>Create a new page by using the 'Create new page' button.</Text>
+                    ? <Box w="100%" >
+                        <Input
+                            fontWeight="600"
+                            onChange={(e) => changePageHeading(e.target.value)}
+                            value={pageHeading === "-1" ? activeTodoPageInfo.todoPage_heading : pageHeading}
+                            placeholder={pageHeading === '' ? 'untitled' : activeTodoPageInfo.todoPage_heading}
+                            variant="unstyled"
+                            fontSize={["xx-large"]}
+                        />
+                        <Divider mb={[2]} />
+                    </Box>
+                    : <Text>Create a new page by using the<br />'Create new page' button.</Text>
             }
             {
                 activeTodoPageInfo === undefined
                     ? <></>
                     : <Input
+                        w="100%"
+                        mb={[4]}
+                        size={["lg"]}
                         onChange={(e) => changePageSubHeading(e.target.value)}
                         value={activeTodoPageInfo?.todoPage_description === "-1" ? "testing" : pageSubHeading}
                         placeholder={activeTodoPageInfo?.todoPage_description === "-1" ? pageSubHeading : "Put a description for the page here."}
                         variant="unstyled">
                     </Input>
             }
-            {
-                activeTodoPageInfo !== undefined && activeTodoPageTodos !== undefined
-                    ? activeTodoPageTodos.map((todo: Todo) => {
-                        return (
-                            <ComponentTodoPageContent
-                                key={todo.todo_id}
-                                todo={todo}
-                                activeTodoPageTodos={activeTodoPageTodos}
-                                getTodosForActivePageFromApi={getTodosForActivePageFromApi}
-                            />
-                        )
-                    })
-                    : <></>
-            }
+            <VStack w="100%" alignItems="flex-start">
+                {
+                    activeTodoPageInfo !== undefined && activeTodoPageTodos !== undefined
+                        ? activeTodoPageTodos.map((todo: Todo) => {
+                            return (
+                                <ComponentTodoPageContent
+                                    key={todo.todo_id}
+                                    todo={todo}
+                                    activeTodoPageTodos={activeTodoPageTodos}
+                                    getTodosForActivePageFromApi={getTodosForActivePageFromApi}
+                                />
+                            )
+                        })
+                        : <></>
+                }
+            </VStack>
         </VStack>
     )
 }

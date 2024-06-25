@@ -10,6 +10,10 @@ import {
   useDisclosure,
   Stack,
   Box,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
 } from "@chakra-ui/react"
 import '../index.css';
 import GetAllTodoPages from "../apiRequests/GET/GetAllTodoPages";
@@ -21,11 +25,9 @@ import ComponentAddNewItemInput from "../components/ComponentsPageDashboard/Comp
 import ComponentSettingsMenu from "../components/ComponentsPageDashboard/ComponentSettingsMenu";
 import apiRequestDeleteIndividualTodoPage from "../apiRequests/DELETE/apiRequestDeleteIndividualTodoPage";
 import toast from "react-hot-toast";
-import { TfiAngleDown } from "react-icons/tfi";
+import { TfiAngleDown, TfiSettings } from "react-icons/tfi";
 
-// TODO: design html & css
-
-const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
+const PageDashboard = ({ accountInfo, setAccountInfo }: { accountInfo: Account, setAccountInfo: React.Dispatch<React.SetStateAction<Account | undefined>> }) => {
 
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
   const [allTodoPagesFromApi, setAllTodoPagesFromApi] = useState<TodoPage[] | undefined>(undefined);
@@ -173,6 +175,16 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
     }
   }
 
+  const signUserOut = () => {
+    setAccountInfo(undefined);
+    setInitialPageLoad(true);
+    setAllTodoPagesFromApi(undefined);
+    setActiveTodoPageInfo(undefined);
+    setActiveTodoPageTodos(undefined);
+    setPageHeading("-1");
+    setPageSubHeading("");
+  }
+
   const menuItems = allTodoPagesFromApi !== undefined
     ? allTodoPagesFromApi.map((todoPage: TodoPage) => {
       return (
@@ -225,6 +237,16 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
                     ? <ComponentSettingsMenu deleteTodoPage={deleteTodoPage} onCloseDrawer={onClose} />
                     : <></>
                 }
+                <Box mb={8}>
+                  <Menu>
+                    <MenuButton as={Button} rightIcon={<TfiSettings />}>
+                      Account
+                    </MenuButton>
+                    <MenuList>
+                      <MenuItem onClick={signUserOut} >Sign out</MenuItem>
+                    </MenuList>
+                  </Menu>
+                </Box>
               </VStack>
             </DrawerBody>
           </DrawerContent>
@@ -245,6 +267,16 @@ const PageDashboard = ({ accountInfo }: { accountInfo: Account }) => {
           ? <ComponentSettingsMenu deleteTodoPage={deleteTodoPage} onCloseDrawer={onClose} />
           : <></>
       }
+      <Box mb={8}>
+        <Menu>
+          <MenuButton as={Button} rightIcon={<TfiSettings />}>
+            Account
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={signUserOut} >Sign out</MenuItem>
+          </MenuList>
+        </Menu>
+      </Box>
     </Box>
   )
 

@@ -10,12 +10,13 @@ function App() {
   const [userHasFailedLogin, setUserHasFailedLogin] = useState<boolean>(false);
   const [createAccount, setCreateAccount] = useState<boolean>(false);
 
+  // TODO: add auto login
+
   if (accountInfo !== undefined) {
     return (
-      <PageDashboard accountInfo={accountInfo} />
+      <PageDashboard accountInfo={accountInfo} setAccountInfo={setAccountInfo} />
     )
   }
-
 
   return (
     <Box>

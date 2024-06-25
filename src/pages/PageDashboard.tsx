@@ -26,6 +26,7 @@ import ComponentSettingsMenu from "../components/ComponentsPageDashboard/Compone
 import apiRequestDeleteIndividualTodoPage from "../apiRequests/DELETE/apiRequestDeleteIndividualTodoPage";
 import toast from "react-hot-toast";
 import { TfiAngleDown, TfiSettings } from "react-icons/tfi";
+import { RemoveJWTFromLocalStorage } from "../utils/utilIndex";
 
 const PageDashboard = ({ accountInfo, setAccountInfo }: { accountInfo: Account, setAccountInfo: React.Dispatch<React.SetStateAction<Account | undefined>> }) => {
 
@@ -183,6 +184,7 @@ const PageDashboard = ({ accountInfo, setAccountInfo }: { accountInfo: Account, 
     setActiveTodoPageTodos(undefined);
     setPageHeading("-1");
     setPageSubHeading("");
+    RemoveJWTFromLocalStorage();
   }
 
   const menuItems = allTodoPagesFromApi !== undefined

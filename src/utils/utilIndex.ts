@@ -10,3 +10,7 @@ export const CheckLocalStorageForJWT = () => {
 export const SaveJWTToLocalStorage = (jwtToken: string) => {
   localStorage.setItem("JWTToken", jwtToken);
 };
+
+export const RemoveJWTFromLocalStorage = () => {
+  localStorage.removeItem("JWTToken");
+};

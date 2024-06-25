@@ -37,9 +37,7 @@ const ComponentSigninCardContent = ({
       setJwtToken(jwtToken);
       SaveJWTToLocalStorage(jwtToken.access_token);
 
-      const isJWTTokenValidResponse = await IsJWTTokenValid(
-        jwtToken.access_token
-      );
+      const isJWTTokenValidResponse = await IsJWTTokenValid(jwtToken.access_token);
 
       if (typeof isJWTTokenValidResponse !== "string") {
         const fullProfileInfoinformationResponse =
@@ -47,6 +45,7 @@ const ComponentSigninCardContent = ({
         if (typeof fullProfileInfoinformationResponse !== "string") {
           setAccountInfo(fullProfileInfoinformationResponse);
           toast.success(`welcome ${fullProfileInfoinformationResponse.account_username}`);
+          SaveJWTToLocalStorage(jwtToken.access_token);
         }
       }
     }
